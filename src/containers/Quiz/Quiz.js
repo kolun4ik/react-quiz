@@ -6,8 +6,11 @@ import ActiveQuiz from '../../components/ActiveQuiz/ActiveQuiz';
 class Quiz extends Component{
 
     state = {
+        activeQuestion: 0,
+        answerState: null, // { [id]: 'success' or 'error'}
         quiz: [
             {
+                id: 1,
                 question: 'Сколько стоит килограмм гвоздей?',
                 rightAnswerId: 2,
                 answers: [
@@ -16,13 +19,59 @@ class Quiz extends Component{
                     {text: '500 рублей', id: 3},
                     {text: 'Не знаю', id: 4},
                 ]
+            },
+            {
+                id: 2,
+                question: 'Где купить кранбуксу',
+                rightAnswerId: 4,
+                answers: [
+                    {text: 'На рынке', id: 1},
+                    {text: 'В хозяйственном магазине', id: 2},
+                    {text: 'В аптеке', id: 3},
+                    {text: 'Не знаю', id: 4},
+                ]
             }
         ],
     };
 
     onAnswerClickHandler = (answerId) => {
-        console.log('-->', 'answer Id', answerId);
+        if (this.state.answerState){
+            const key = Object.keys(this.state.answerState)[0];
+            if (this.state.answerState[key] === 'success') {
+                return
+            }
+        }
+
+        const question = this.state.quiz[this.state.activeQuestion];
+        if ( question.rightAnswerId === answerId ) {
+
+            this.setState({
+                answerState: {[answerId]: 'success'},
+            });
+            const timeout = window.setTimeout(() => {
+
+                if( this.isQuizFinished() ) {
+                    console.log('Finished')
+                } else {
+                    this.setState({
+                        activeQuestion: this.state.activeQuestion + 1,
+                        activeState: null,
+                    });
+                }
+
+                window.clearTimeout(timeout);
+            }, 1000)
+
+        }else {
+            this.setState({
+                answerState: {[answerId]: 'error'},
+            })
+        }
     };
+
+    isQuizFinished(){
+        return this.state.activeQuestion + 1 === this.state.quiz.length
+    }
 
     render() {
         return (
@@ -30,9 +79,12 @@ class Quiz extends Component{
                 <div className={classes.QuizWrapper}>
                     <h1>Ответьте на все вопросы!</h1>
                     <ActiveQuiz
-                        answers={this.state.quiz[0].answers}
+                        answers={this.state.quiz[this.state.activeQuestion].answers}
                         question={this.state.quiz[0].question}
                         onAnswerClick={this.onAnswerClickHandler}
+                        quizLenght={this.state.quiz.length}
+                        answerNumber={this.state.activeQuestion + 1}
+                        state={this.state.answerState}
                     />
                 </div>
             </div>
