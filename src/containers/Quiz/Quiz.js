@@ -8,14 +8,20 @@ class Quiz extends Component{
     state = {
         quiz: [
             {
+                question: 'Сколько стоит килограмм гвоздей?',
+                rightAnswerId: 2,
                 answers: [
-                    {text: 'Вопрос 1'},
-                    {text: 'Вопрос 2'},
-                    {text: 'Вопрос 3'},
-                    {text: 'Вопрос 4'},
+                    {text: '300 рублей', id: 1},
+                    {text: '400 рублей', id: 2},
+                    {text: '500 рублей', id: 3},
+                    {text: 'Не знаю', id: 4},
                 ]
             }
         ],
+    };
+
+    onAnswerClickHandler = (answerId) => {
+        console.log('-->', 'answer Id', answerId);
     };
 
     render() {
@@ -25,6 +31,8 @@ class Quiz extends Component{
                     <h1>Ответьте на все вопросы!</h1>
                     <ActiveQuiz
                         answers={this.state.quiz[0].answers}
+                        question={this.state.quiz[0].question}
+                        onAnswerClick={this.onAnswerClickHandler}
                     />
                 </div>
             </div>
